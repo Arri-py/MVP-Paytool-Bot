@@ -1,7 +1,7 @@
 from aiogram import Router, types, F
 from bot.keyboards.faq_menu import faq_kb
 from bot.keyboards.guarantees_menu import guarantees_kb
-from bot.keyboards.main_menu import main_menu
+from bot.keyboards.main_menu import get_main_menu
 from bot.keyboards.back_menu import back_kb
 from bot.keyboards.regions_kb import regions_kb
 from aiogram.types import FSInputFile
@@ -12,6 +12,7 @@ from bot.services.redis_service import (
     mark_bonus_received,
     add_donates
 )
+from bot.config import Config
 
 router = Router()
 
@@ -195,7 +196,8 @@ async def website(message: types.Message):
 # --------- Callbacks и возврат на главное ----------
 @router.callback_query(F.data == "to_main")
 async def cb_to_main(cb: types.CallbackQuery):
-    await cb.message.answer(MAIN_MENU_TEXT, reply_markup=main_menu)
+    is_admin = cb.from_user.id in Config.ADMIN_CACHE
+    await cb.message.answer(MAIN_MENU_TEXT, reply_markup=get_main_menu(is_admin))
     await cb.answer()
 
 
@@ -214,4 +216,5 @@ async def cb_office(cb: types.CallbackQuery):
 # --------- Кнопка "⬅️ Назад" ----------
 @router.message(F.text == "⬅️ Назад")
 async def back_to_main(message: types.Message):
-    await message.answer(MAIN_MENU_TEXT, reply_markup=main_menu)
+    is_admin = message.from_user.id in Config.ADMIN_CACHE
+    await message.answer(MAIN_MENU_TEXT, reply_markup=get_main_menu(is_admin))

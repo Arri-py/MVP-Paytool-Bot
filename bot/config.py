@@ -1,6 +1,5 @@
-from aiogram import Bot
+from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
-from aiogram.dispatcher.dispatcher import Dispatcher
 from aiogram.fsm.storage.redis import RedisStorage
 from dotenv import load_dotenv
 from redis.asyncio import Redis  # Используем асинхронный Redis

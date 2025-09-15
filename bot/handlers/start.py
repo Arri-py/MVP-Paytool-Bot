@@ -1,6 +1,6 @@
 from aiogram import Router, types
 from aiogram.filters import CommandStart
-from bot.keyboards.main_menu import main_menu
+from bot.keyboards.main_menu import get_main_menu
 from bot.services.redis_service import get_welcome_text, register_user
 from bot.config import Config
 from aiogram.types import FSInputFile
@@ -35,18 +35,18 @@ async def cmd_start(message: types.Message):
         print("Redis register_user error:", e)
 
     welcome_text = await get_welcome_text()
-    # Если админ — неявно показываем админ-кнопки в дальнейшем, но тут просто приветствие
     welcome_message = (
         f"👋 {user.first_name}!\n\n"
         f"{welcome_text}\n\n"
         "Если вы впервые — нажмите «🎁 Получить 50 рублей на первую покупку», чтобы активировать бонус."
     )
 
+    is_admin = user.id in Config.ADMIN_CACHE
+
     # Отправляем стартовую картинку (если есть)
     try:
         photo = FSInputFile("img/start.jpg")
-        await message.answer_photo(photo, caption=welcome_message, reply_markup=main_menu)
+        await message.answer_photo(photo, caption=welcome_message, reply_markup=get_main_menu(is_admin))
     except Exception as e:
         print("Start photo error:", e)
-        await message.answer(welcome_message, reply_markup=main_menu)
-
+        await message.answer(welcome_message, reply_markup=get_main_menu(is_admin))
