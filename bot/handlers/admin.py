@@ -17,10 +17,9 @@ async def set_welcome(message: types.Message):
     await set_welcome_text(new_text)
     await message.answer("✅ Приветственный текст обновлён!")
 
-@router.message(F.text == "/stats")
-async def get_stats(message: types.Message):
+@router.message(F.text == "📊 Статистика")
+async def stats_cmd(message: types.Message):
     if message.from_user.id not in Config.ADMIN_CACHE:
         return await message.answer("⛔ У вас нет доступа.")
-    
-    user_count = await get_user_count()
-    await message.answer(f"📊 Статистика бота:\n👥 Пользователей: {user_count}")
+    count = await get_user_count()
+    await message.answer(f"📊 Статистика бота:\n👥 Пользователей: {count}")
