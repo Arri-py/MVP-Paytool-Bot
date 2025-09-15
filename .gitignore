@@ -1,0 +1,67 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual-envs (все популярные имена)
+venv/
+env/
+.venv/
+.conda/
+env.bak/
+venv.bak/
+pipenv/
+.venv*/
+
+# Jupyter / IPython
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Testing / coverage
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+.nox/
+*.cover
+*.log
+
+# Build / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+wheelhouse/
+pip-wheel-metadata/
+
+# MyPy / Ruff / Black cache
+.mypy_cache/
+.ruff_cache/
+.dmypy.json
+dmypy.json
+
+# Secrets & local config
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+secrets.toml
+config.local.py
+  
+# Docker (если используете)
+.docker/
+
+# Mac / Windows
+.DS_Store
+desktop.ini
