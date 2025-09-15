@@ -15,7 +15,7 @@ from bot.services.redis_service import (
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 async def sender_for_campaign(cid: str, camp: dict):
-    # audience str -> dict (наивный парсинг через eval/ast)
+    # наивный парсинг через eval/ast
     import ast
     try:
         audience = ast.literal_eval(camp.get("audience","{}"))
@@ -54,7 +54,7 @@ async def sender_for_campaign(cid: str, camp: dict):
             await incr_campaign_stat(cid, "failed", 1)
         except Exception:
             await incr_campaign_stat(cid, "failed", 1)
-            await asyncio.sleep(0.05)  # чуть-чуть, чтобы не спамить
+            await asyncio.sleep(0.05)
 
     await set_campaign_finished(cid)
 
@@ -81,7 +81,7 @@ async def scheduler_loop():
                             await update_campaign_status(cid, "sending")
                             await sender_for_campaign(cid, c)
                     except Exception:
-                        # если раскорячилось время — лучше отправить сразу
+                        # если померло время — лучше отправить сразу
                         await update_campaign_status(cid, "sending")
                         await sender_for_campaign(cid, c)
         except Exception as e:
@@ -101,7 +101,7 @@ async def main():
     dp.include_router(broadcast_router)
 
     print("Бот запущен!")
-    # Запускаем планировщик
+    # Pланировщик
     asyncio.create_task(scheduler_loop())
 
     await dp.start_polling(bot)

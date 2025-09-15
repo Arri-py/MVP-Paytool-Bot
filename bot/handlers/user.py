@@ -26,26 +26,32 @@ MAIN_MENU_TEXT = (
     "🛍️ Широкий ассортимент — не только Steam"
 )
 
+# показать кнопку «Назад», когда у сообщения inline-кнопки
+async def _show_back_button(message: types.Message) -> None:
+    # отдельным сообщением выдаём reply-клавиатуру с «⬅️ Назад»
+    try:
+        await message.answer(" ", reply_markup=back_kb)
+    except Exception as e:
+        print("Show back button error:", e)
 
-# --------- бонус ----------
+
+# бонус
 @router.message(F.text == "🎁 Получить 50 рублей на первую покупку")
 async def get_bonus(message: types.Message):
     user_id = message.from_user.id
-    # если уже получал бонус
     if await has_received_bonus(user_id):
-        await message.answer("❌ Вы уже получали бонус или совершали покупки.")
+        await message.answer("❌ Вы уже получали бонус или совершали покупки.", reply_markup=back_kb)
         return
-    # выдать бонус
     try:
         await mark_bonus_received(user_id)
         await add_donates(user_id, 50)
-        await message.answer("✅ Вы получили +50 рублей на первую покупку!")
+        await message.answer("✅ Вы получили +50 рублей на первую покупку!", reply_markup=back_kb)
     except Exception as e:
         print("Ошибка выдачи бонуса:", e)
-        await message.answer("Произошла ошибка при выдаче бонуса — повторите позже.")
+        await message.answer("Произошла ошибка при выдаче бонуса — повторите позже.", reply_markup=back_kb)
 
 
-# --------- Личный кабинет ----------
+# Личный кабинет
 @router.message(F.text == "👤 Личный кабинет")
 async def personal_account(message: types.Message):
     user = message.from_user
@@ -72,7 +78,7 @@ async def personal_account(message: types.Message):
     await message.answer(text, reply_markup=back_kb, disable_web_page_preview=True)
 
 
-# --------- Пополнение Steam / регионы ----------
+# Пополнение Steam / регионы
 @router.message(F.text == "🎮 Пополнить Steam по логину")
 async def choose_region(message: types.Message):
     await message.answer("Выберите регион вашего аккаунта:", reply_markup=regions_kb)
@@ -95,14 +101,14 @@ async def how_to_find_region(message: types.Message):
     )
     try:
         photo = FSInputFile("img/replenishment.jpg")
-        await message.answer_photo(photo, caption=text, reply_markup=back_kb)
+        await message.answer_photo(photo, caption=text)
     except Exception as e:
         print("Replenishment photo error:", e)
-        await message.answer(text, reply_markup=back_kb)
+        await message.answer(text)
+    await _show_back_button(message)
 
 
-
-# --------- Отзывы (с картинкой) ----------
+# Отзывы (с картинкой)
 @router.message(F.text == "⭐ Отзывы")
 async def reviews(message: types.Message):
     kb = types.InlineKeyboardMarkup(inline_keyboard=[
@@ -117,10 +123,10 @@ async def reviews(message: types.Message):
     except Exception as e:
         print("Reviews photo error:", e)
         await message.answer("Отзывы наших клиентов 📢", reply_markup=kb)
+    await _show_back_button(message)
 
 
-
-# --------- Гарантии ----------
+# Гарантии
 @router.message(F.text == "🔒 Гарантии")
 async def guarantees(message: types.Message):
     text = (
@@ -133,9 +139,10 @@ async def guarantees(message: types.Message):
         "💬 Круглосуточная поддержка 👉 https://t.me/zadonatitru_support"
     )
     await message.answer(text, reply_markup=guarantees_kb, disable_web_page_preview=True)
+    await _show_back_button(message)
 
 
-# --------- FAQ (без кнопки "На главную") ----------
+# FAQ 
 @router.message(F.text == "❓ FAQ")
 async def faq(message: types.Message):
     text = (
@@ -145,18 +152,20 @@ async def faq(message: types.Message):
         "Вы всегда можете написать в поддержку 👉 https://t.me/zadonatitru_support"
     )
     await message.answer(text, reply_markup=faq_kb, disable_web_page_preview=True)
+    await _show_back_button(message)
 
 
-# --------- Поддержка ----------
+# Поддержка 
 @router.message(F.text == "💬 Поддержка")
 async def support(message: types.Message):
     kb = types.InlineKeyboardMarkup(
         inline_keyboard=[[types.InlineKeyboardButton(text="Написать в поддержку", url="https://t.me/zadonatitru_support")]]
     )
     await message.answer("Нужна помощь? Свяжитесь с нашей поддержкой:", reply_markup=kb)
+    await _show_back_button(message)
 
 
-# --------- Другие товары ----------
+# Другие товары
 @router.message(F.text == "🛍️ Другие товары")
 async def other_products(message: types.Message):
     text = (
@@ -167,22 +176,24 @@ async def other_products(message: types.Message):
     await message.answer(text, disable_web_page_preview=True, reply_markup=back_kb)
 
 
-# --------- Скидки (ссылка) ----------
+# Скидки
 @router.message(F.text == "🔥 АКТУАЛЬНЫЕ СКИДКИ В STEAM")
 async def steam_discounts(message: types.Message):
     kb = types.InlineKeyboardMarkup(
         inline_keyboard=[[types.InlineKeyboardButton(text="Открыть скидки 🎮", url="https://store.steampowered.com/search/?os=win&specials=1&filter=topsellers&ndl=")]]
     )
     await message.answer("🔥 Актуальные скидки в Steam:", reply_markup=kb)
+    await _show_back_button(message)
 
 
-# --------- Канал и сайт ----------
+# Канал и сайт
 @router.message(F.text == "📢 Telegram-канал")
 async def telegram_channel(message: types.Message):
     kb = types.InlineKeyboardMarkup(
         inline_keyboard=[[types.InlineKeyboardButton(text="Наш канал 📢", url="https://t.me/zadonatit_ru")]]
     )
     await message.answer("Подпишись на наш Telegram-канал:", reply_markup=kb)
+    await _show_back_button(message)
 
 
 @router.message(F.text == "🌐 Наш сайт")
@@ -191,9 +202,10 @@ async def website(message: types.Message):
         inline_keyboard=[[types.InlineKeyboardButton(text="🌐 Перейти на сайт", url="https://zadonatit.ru/")]]
     )
     await message.answer("Наш официальный сайт:", reply_markup=kb)
+    await _show_back_button(message)
 
 
-# --------- Callbacks и возврат на главное ----------
+# Callbacks и возврат на главное
 @router.callback_query(F.data == "to_main")
 async def cb_to_main(cb: types.CallbackQuery):
     is_admin = cb.from_user.id in Config.ADMIN_CACHE
@@ -209,11 +221,11 @@ async def cb_office(cb: types.CallbackQuery):
         "🕒 Время работы: Пн-Пт 10:00-18:00\n\n"
         "В данном офисе работает наша команда специалистов."
     )
-    await cb.message.answer(text)
+    await cb.message.answer(text, reply_markup=back_kb)
     await cb.answer()
 
 
-# --------- Кнопка "⬅️ Назад" ----------
+# кнопка Назад
 @router.message(F.text == "⬅️ Назад")
 async def back_to_main(message: types.Message):
     is_admin = message.from_user.id in Config.ADMIN_CACHE

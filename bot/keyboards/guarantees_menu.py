@@ -1,6 +1,5 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-# Убрали кнопку "Главная"
 guarantees_kb = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Отзывы", url="https://t.me/reviews_zadonatit_ru")],
     [InlineKeyboardButton(text="Оферта", url="https://zadonatit.ru/offer")],

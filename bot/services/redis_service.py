@@ -8,7 +8,7 @@ USERS_SET_KEY = "users:all"
 def _user_key(user_id: int, suffix: str) -> str:
     return f"user:{user_id}:{suffix}"
 
-# --------- Приветственный текст ---------
+# Приветственный текст
 async def set_welcome_text(text: str) -> None:
     await redis.set(WELCOME_TEXT_KEY, text)
 
@@ -24,7 +24,7 @@ async def get_welcome_text() -> str:
     )
     return await redis.get(WELCOME_TEXT_KEY) or default
 
-# --------- Пользователи / статистика ---------
+# Пользователи / статистика
 async def register_user(user_id: int, username: str, first_name: str, last_name: str, joined_at: str) -> None:
     key = _user_key(user_id, "profile")
     await redis.hset(key, mapping={
@@ -38,7 +38,7 @@ async def register_user(user_id: int, username: str, first_name: str, last_name:
 async def get_user_count() -> int:
     return await redis.scard(USERS_SET_KEY)
 
-# --------- Покупки / донаты / бонусы ---------
+# Покупки / донаты / бонусы
 async def get_user_purchases(user_id: int) -> int:
     val = await redis.get(_user_key(user_id, "purchases"))
     return int(val or 0)
@@ -56,7 +56,7 @@ async def has_received_bonus(user_id: int) -> bool:
 async def mark_bonus_received(user_id: int) -> None:
     await redis.set(_user_key(user_id, "bonus_received"), "1")
 
-# --------- Активность пользователей ---------
+# Активность пользователей
 async def set_last_seen(user_id: int, iso_ts: str) -> None:
     await redis.set(_user_key(user_id, "last_seen"), iso_ts)
 
@@ -72,7 +72,7 @@ async def get_last_purchase_at(user_id: int) -> Optional[str]:
 async def get_joined_at(user_id: int) -> Optional[str]:
     return await redis.hget(_user_key(user_id, "profile"), "joined_at")
 
-# --------- Рассылки ---------
+# Рассылки
 # Храним список id кампаний и детальные хэши
 CAMPAIGNS_SET = "campaigns:all"      # set of campaign ids
 CAMPAIGN_SEQ = "campaigns:seq"       # increment for id

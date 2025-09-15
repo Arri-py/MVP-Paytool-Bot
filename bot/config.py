@@ -2,7 +2,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.fsm.storage.redis import RedisStorage
 from dotenv import load_dotenv
-from redis.asyncio import Redis  # Используем асинхронный Redis
+from redis.asyncio import Redis
 import os
 import sys
 
@@ -18,7 +18,6 @@ class Config:
     REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
     REDIS_DB = int(os.getenv("REDIS_DB", "0"))
 
-# Инициализация Redis
 redis = Redis(
     host=Config.REDIS_HOST,
     port=Config.REDIS_PORT,
@@ -27,7 +26,6 @@ redis = Redis(
 )
 storage = RedisStorage(redis=redis)
 
-# Инициализация бота и диспетчера
 try:
     bot = Bot(token=Config.BOT_TOKEN, default=DefaultBotProperties(parse_mode="HTML"))
     dp = Dispatcher(storage=storage)

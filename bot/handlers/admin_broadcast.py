@@ -97,7 +97,7 @@ async def cancel_campaign(message: types.Message, state: FSMContext):
 @router.message(CampaignStates.audience)
 async def choose_audience(message: types.Message, state: FSMContext):
     t = message.text
-    # простые варианты — сразу далее
+
     if t == "Все пользователи":
         await state.update_data(audience={"kind": "all"})
         await state.set_state(CampaignStates.type_choice)
@@ -199,7 +199,7 @@ async def finalize_campaign(message: types.Message, state: FSMContext):
         "file_id": file_id,
         "button_text": btn_text,
         "button_url": btn_url,
-        "audience": str(audience),  # строка (dict можно сериализовать, но для простоты str)
+        "audience": str(audience),  # строка простоты str
         "type": "scheduled" if send_type == "scheduled" else "now",
         "schedule_at": schedule_at,
         "created_by": str(message.from_user.id),
